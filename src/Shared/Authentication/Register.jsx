@@ -45,7 +45,7 @@ const Register = () => {
 
           if (acoountType === "Worker") {
             axios
-              .post("https://micronomy.vercel.app/allworkers", userData)
+              .post("/allworkers", userData)
               .then(() => {
                 swal({
                   text: "You have successfully registered and earned 10 coins!",
@@ -65,7 +65,7 @@ const Register = () => {
           }
           else {
             axios
-              .post("https://micronomy.vercel.app/allbuyers", userData)
+              .post("/allbuyers", userData)
               .then(() => {
                 swal({
                   text: "You have successfully registered and earned 50 coins!",

@@ -10,7 +10,7 @@ const Top_Workers = () => {
   const [workers, setWorkers] = useState([]);
   useEffect(() => {
     axios
-      .get("https://micronomy.vercel.app/allworkers")
+      .get("/allworkers")
       .then((res) => {
         if (res.data) {
           setWorkers(res.data);

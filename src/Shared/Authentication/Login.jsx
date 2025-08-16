@@ -69,11 +69,11 @@ const Login = () => {
       };
 
       // First check if user already exists
-      axios.get(`https://micronomy.vercel.app/allworkers/${user.email}`)
+      axios.get(`/allworkers/${user.email}`)
         .then(res => {
           if (res.data.length === 0) {
             // User doesn't exist, create new
-            axios.post("https://micronomy.vercel.app/allworkers", userData)
+            axios.post("/allworkers", userData)
               .then(() => {
                 swal({
                   text: "You have successfully registered and earned 10 coins!",

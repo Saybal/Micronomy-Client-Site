@@ -3,6 +3,7 @@ import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import axios from "axios";
 import Swal from "sweetalert2";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const Withdrawal = () => {
   const { user } = useContext(AuthContext);
@@ -12,10 +13,11 @@ const Withdrawal = () => {
   const [paymentSystem, setPaymentSystem] = useState("Bkash");
   const [accountNumber, setAccountNumber] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
-    axios
-      .get(`https://micronomy.vercel.app/allworkers/${user.email}`)
+    axiosInstance
+      .get(`/allworkers/${user.email}`)
       .then((res) => {
         setCoins(res.data[0].coins || 0);
       })
@@ -51,12 +53,12 @@ const Withdrawal = () => {
     };
 
     try {
-      await axios.post("https://micronomy.vercel.app/withdrawals", payload);
-      await axios.patch(`https://micronomy.vercel.app/worker/${user.email}`, {
+      await axiosInstance.post("/withdrawals", payload);
+      await axiosInstance.patch(`/worker/${user.email}`, {
         dec: withdrawCoins,
       });
 
-      await axios.post("https://micronomy.vercel.app/notifications", {
+      await axiosInstance.post("/notifications", {
         message: `${user.displayName} has requested a withdrawal of $${withdrawalAmount} via ${paymentSystem}.`,
         toRole: "admin",
         actionRoute: "/dashboard/admin-home",

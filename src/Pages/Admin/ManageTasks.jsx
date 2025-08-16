@@ -11,14 +11,14 @@ const ManageTasks = () => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    axios.get("https://micronomy.vercel.app/addtask")
+    axios.get("http://localhost:3000/addtask")
       .then((res) => setTasks(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const handleDelete = async (taskId) => {
     try {
-      await axios.delete(`https://micronomy.vercel.app/addtask/${taskId}`);
+      await axios.delete(`http://localhost:3000/addtask/${taskId}`);
       setTasks((prev) => prev.filter((task) => task._id !== taskId));
       Swal.fire("Deleted!", "Task has been removed from the database.", "success");
     } catch (err) {

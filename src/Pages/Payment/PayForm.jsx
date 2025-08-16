@@ -8,6 +8,7 @@ import axios from "axios";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { set } from "react-hook-form";
 import Loading from "../../Shared/Components/Loader/Loading";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const PayForm = () => {
   const stripe = useStripe();
@@ -21,12 +22,13 @@ const PayForm = () => {
   const [error, setError] = useState("");
 
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   const { isPending, data: coinInfo = {} } = useQuery({
     queryKey: ["coin", coinId.id],
     queryFn: async () => {
       const res = await axios.get(
-        `https://micronomy.vercel.app/purchase-plans/${coinId.id}`
+        `/purchase-plans/${coinId.id}`
       );
       return res.data;
     },
@@ -84,8 +86,8 @@ const PayForm = () => {
     console.log("Sending to backend:", priceInCents);
 
     // Payment intent
-    const response = await axios.post(
-      "https://micronomy.vercel.app/create-payment-intent",
+    const response = await axiosInstance.post(
+      "/create-payment-intent",
       {
         amount: priceInCents,
         coinId: coinId.id,
@@ -117,7 +119,7 @@ const PayForm = () => {
         });
 
         // Posting Payment Data
-        await axios.post("https://micronomy.vercel.app/payments", {
+        await axiosInstance.post("/payments", {
           username: user.displayName,
           useremail: user.email,
           method: paymentMethod.card.brand,
@@ -128,8 +130,8 @@ const PayForm = () => {
         });
 
         // Upadtaing coin in user's data
-        await axios.patch(
-          `https://micronomy.vercel.app/buyer/${user.email}`,
+        await axiosInstance.patch(
+          `/buyer/${user.email}`,
           {
             incrementBy: coins,
           }

@@ -11,9 +11,9 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       const [buyersRes, workersRes, adminsRes] = await Promise.all([
-        axios.get("https://micronomy.vercel.app/allbuyers"),
-        axios.get("https://micronomy.vercel.app/allworkers"),
-        axios.get("https://micronomy.vercel.app/alladmins"),
+        axios.get("http://localhost:3000/allbuyers"),
+        axios.get("http://localhost:3000/allworkers"),
+        axios.get("http://localhost:3000/alladmins"),
       ]);
 
       const combined = [
@@ -35,7 +35,7 @@ const ManageUsers = () => {
   const handleDelete = async (user) => {
     try {
       await axios.delete(
-        `https://micronomy.vercel.app/${
+        `/${
           user.source === "buyer" ? "allbuyers" : "allworkers"
         }/${user.user_email}`
       );
@@ -59,7 +59,7 @@ const ManageUsers = () => {
       
       const encodedEmail = encodeURIComponent(user.email);
       
-      await axios.delete(`https://micronomy.vercel.app/${sourcePath}/${encodedEmail}`);
+      await axios.delete(`/${sourcePath}/${encodedEmail}`);
 
       // Add to target
       const newUser = { ...user, role: newRole };
@@ -73,7 +73,7 @@ const ManageUsers = () => {
           ? "allworkers"
             : "alladmins";
       
-      await axios.post(`https://micronomy.vercel.app/${newPath}`,newUser);
+      await axios.post(`/${newPath}`,newUser);
 
       Swal.fire({
         title: "Updated!",

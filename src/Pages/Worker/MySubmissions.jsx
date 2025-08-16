@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const MySubmissions = () => {
   const { user } = useContext(AuthContext);
@@ -10,11 +11,12 @@ const MySubmissions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 5;
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
     if (user?.email) {
-      axios
-        .get(`https://micronomy.vercel.app/submissions/${user.email}?page=${currentPage}&limit=${pageSize}`)
+      axiosInstance
+        .get(`/submissions/${user.email}?page=${currentPage}&limit=${pageSize}`)
         .then((res) => {
           setSubmissions(res.data.submissions);
           setTotalPages(res.data.totalPages);

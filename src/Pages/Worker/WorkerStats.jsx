@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const WorkerStats = () => {
   const { user } = useContext(AuthContext);
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   const [stats, setStats] = useState({
     totalSubmissions: 0,
@@ -15,8 +17,8 @@ const WorkerStats = () => {
 
   useEffect(() => {
     if (user?.email) {
-      axios
-        .get(`https://micronomy.vercel.app/submissions/${user.email}`)
+      axiosInstance
+        .get(`/submissions/${user.email}`)
         .then((res) => {
           const submissions = res.data;
           const totalSubmissions = submissions.length;

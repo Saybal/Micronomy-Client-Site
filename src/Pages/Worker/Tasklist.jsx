@@ -12,7 +12,7 @@ const TaskList = () => {
 
   useEffect(() => {
     axios
-      .get("https://micronomy.vercel.app/addtask")
+      .get("http://localhost:3000/addtask")
       .then((res) => {
         const availableTasks = res.data.filter(
           (task) => parseInt(task.required_workers) > 0

@@ -12,19 +12,19 @@ const AdminStates = () => {
   const [totalPayments, setTotalPayments] = useState(0);
 
   useEffect(() => {
-    axios.get("https://micronomy.vercel.app/allworkers").then((res) => {
+    axios.get("http://localhost:3000/allworkers").then((res) => {
       setTotalWorkers(res.data.length);
       const coins = res.data.reduce((sum, user) => sum + (user.coins || 0), 0);
       setTotalCoins((prev) => prev + coins);
     });
 
-    axios.get("https://micronomy.vercel.app/allbuyers").then((res) => {
+    axios.get("http://localhost:3000/allbuyers").then((res) => {
       setTotalBuyers(res.data.length);
       const coins = res.data.reduce((sum, user) => sum + (user.coins || 0), 0);
       setTotalCoins((prev) => prev + coins);
     });
 
-    axios.get("https://micronomy.vercel.app/payments").then((res) => {
+    axios.get("http://localhost:3000/payments").then((res) => {
       const total = res.data.reduce((sum, payment) => sum + (payment.price || 0), 0);
       setTotalPayments(total);
     });

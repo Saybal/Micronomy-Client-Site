@@ -30,7 +30,7 @@ const AdminDashboard = ({ coin }) => {
 
   useEffect(() => {
     if (showPopup) {
-      axios.get("https://micronomy.vercel.app/notifications?toRole=admin")
+      axios.get("/notifications?toRole=admin")
         .then((res) => {
           const sorted = res.data.sort((a, b) => new Date(b.time) - new Date(a.time));
           setNotifications(sorted);

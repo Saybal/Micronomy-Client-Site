@@ -29,7 +29,7 @@ const PurchaseCoin = () => {
   const [plans, setPlans] = useState([]);
 
 useEffect(() => {
-  axios.get("https://micronomy.vercel.app/purchase-plans")
+  axios.get("/purchase-plans")
     .then((response) => {
       setPlans(response.data);
     })

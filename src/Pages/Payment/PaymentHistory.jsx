@@ -4,15 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useTheme } from '../../Shared/Hooks/useTheme';
 import Loading from '../../Shared/Components/Loader/Loading';
+import AxiosToken from '../../Shared/Hooks/AxiosToken';
 
 const PaymentHistory = () => {
 
-    const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const axiosInstance = AxiosToken();
     
     const { isPending , data: payments = [] } = useQuery({
         queryKey: ['paymentHistory', user?.email],
         queryFn: async () => {
-            const res = await axios.get(`https://micronomy.vercel.app/payments/${user?.email}`);
+            const res = await axiosInstance.get(`/payments/${user?.email}`);
             return res.data;
         },
     });

@@ -20,7 +20,7 @@ const Testimonial = () => {
 
   useEffect(() => {
     axios
-      .get("https://micronomy.vercel.app/testimonials")
+      .get("/testimonials")
       .then((res) => {
         if (res.data) {
           setTestimonials(res.data);

@@ -5,6 +5,7 @@ import { Dialog } from "@headlessui/react";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const MyTasks = () => {
   const { user } = useContext(AuthContext);
@@ -12,10 +13,11 @@ const MyTasks = () => {
   const [editTask, setEditTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
     if (user?.email) {
-      axios.get(`https://micronomy.vercel.app/addtask/email/${user.email}`)
+      axiosInstance.get(`/addtask/email/${user.email}`)
         .then(res => {
           const sorted = res.data.sort((a, b) => new Date(b.completion_date) - new Date(a.completion_date));
           setTasks(sorted);
@@ -26,9 +28,9 @@ const MyTasks = () => {
 
   const handleDelete = async (task) => {
     try {
-      await axios.delete(`https://micronomy.vercel.app/addtask/${task._id}`);
+      await axiosInstance.delete(`/addtask/${task._id}`);
       const refillAmount = parseInt(task.required_workers) * parseInt(task.payable_amount);
-      await axios.patch(`https://micronomy.vercel.app/buyers/${user.email}`, {
+      await axiosInstance.patch(`/buyers/${user.email}`, {
         coins: refillAmount
       });
 
@@ -47,7 +49,7 @@ const MyTasks = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://micronomy.vercel.app/addtask/${editTask._id}`, editTask);
+      await axios.put(`/addtask/${editTask._id}`, editTask);
       setTasks(prev => prev.map(t => t._id === editTask._id ? editTask : t));
       setIsModalOpen(false);
       Swal.fire("Updated", "Task updated successfully!", "success");

@@ -13,7 +13,7 @@ const WithdrawRequest = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get("https://micronomy.vercel.app/allwithdraws");
+      const res = await axios.get("http://localhost:3000/allwithdraws");
       setRequests(res.data);
     } catch (err) {
       console.error("Failed to fetch requests", err);
@@ -24,7 +24,7 @@ const WithdrawRequest = () => {
     setLoading(true);
     try {
       
-      await axios.patch(`https://micronomy.vercel.app/allwithdraws/${req._id}`, {
+      await axios.patch(`http://localhost:3000/allwithdraws/${req._id}`, {
         status: "approved",
       });
 

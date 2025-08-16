@@ -16,21 +16,21 @@ const DashboardRouter = () => {
     useEffect(() => {
         const fetchRole = async () => {
             try {
-                const adminRes = await axios.get(`https://micronomy.vercel.app/alladmins/${user.email}`);
+                const adminRes = await axios.get(`/alladmins/${user.email}`);
                 if (adminRes.data.length > 0) {
                     setRole("admin");
                     setCoin(adminRes.data[0].coins)
                     setLoading(false);
                     return;
                 }
-                const buyerRes = await axios.get(`https://micronomy.vercel.app/allbuyers/${user.email}`);
+                const buyerRes = await axios.get(`/allbuyers/${user.email}`);
                 if (buyerRes.data.length > 0) {
                     setRole("buyer");
                     setCoin(buyerRes.data[0].coins)
                     setLoading(false);
                     return;
                 }
-                const workerRes = await axios.get(`https://micronomy.vercel.app/allworkers/${user.email}`);
+                const workerRes = await axios.get(`/allworkers/${user.email}`);
                 if (workerRes.data.length > 0) {
                     setRole("worker");
                     setCoin(workerRes.data[0].coins)

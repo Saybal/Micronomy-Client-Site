@@ -6,6 +6,7 @@ import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import { motion } from "framer-motion";
 import { FaUserTie, FaCalendarAlt, FaCoins, FaUsers } from "react-icons/fa";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const TaskDetails = () => {
   const { id } = useParams();
@@ -13,9 +14,10 @@ const TaskDetails = () => {
   const [task, setTask] = useState(null);
   const [submissionDetails, setSubmissionDetails] = useState("");
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
-    axios.get(`https://micronomy.vercel.app/addtask/${id}`)
+    axiosInstance.get(`/addtask/${id}`)
       .then(res => setTask(res.data[0]))
       .catch(err => console.error(err));
   }, [id]);
@@ -43,7 +45,7 @@ const TaskDetails = () => {
 
   try {
     // 1. Submit task
-    await axios.post("https://micronomy.vercel.app/submissions", submission);
+    await axiosInstance.post("/submissions", submission);
 
     // 2. Send Notification to Buyer
     const notification = {
@@ -53,7 +55,7 @@ const TaskDetails = () => {
       time: new Date(),
     };
 
-    await axios.post("https://micronomy.vercel.app/notifications", notification);
+    await axiosInstance.post("/notifications", notification);
 
     Swal.fire("Success", "Submission sent successfully!", "success");
     setSubmissionDetails("");

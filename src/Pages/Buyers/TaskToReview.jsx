@@ -5,6 +5,7 @@ import { Dialog } from "@headlessui/react";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { motion } from "framer-motion";
 import { useTheme } from "../../Shared/Hooks/useTheme";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const TaskToReview = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -13,12 +14,13 @@ const TaskToReview = () => {
 
   const { user } = useContext(AuthContext);
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
     if (user?.email) {
-      axios
+      axiosInstance
         .get(
-          `https://micronomy.vercel.app/submissions?buyer_email=${user.email}&status=pending`
+          `/submissions?buyer_email=${user.email}&status=pending`
         )
         .then((res) => setSubmissions(res.data))
         .catch((err) => console.error(err));
@@ -27,29 +29,29 @@ const TaskToReview = () => {
 
   const handleApprove = async (submission) => {
     try {
-      await axios.patch(`https://micronomy.vercel.app/submissions/${submission._id}`, {
+      await axiosInstance.patch(`/submissions/${submission._id}`, {
         status: "approve",
       });
 
-      await axios.patch(
-        `https://micronomy.vercel.app/allworkers/${submission.worker_email}`,
+      await axiosInstance.patch(
+        `/allworkers/${submission.worker_email}`,
         {
           add: parseInt(submission.payable_amount),
         }
       );
 
-      await axios.patch(`https://micronomy.vercel.app/addtask/${submission.task_id}`, {
+      await axiosInstance.patch(`/addtask/${submission.task_id}`, {
         dec: parseInt(submission.payable_amount),
       });
 
-      await axios.patch(
-        `https://micronomy.vercel.app/buyer/approve/${submission.Buyer_email}`,
+      await axiosInstance.patch(
+        `/buyer/approve/${submission.Buyer_email}`,
         {
           dec: parseInt(submission.payable_amount),
         }
       );
 
-      await axios.post("https://micronomy.vercel.app/notifications", {
+      await axiosInstance.post("/notifications", {
         message: `You have earned ${submission.payable_amount} coins from ${submission.Buyer_name} for completing "${submission.task_title}".`,
         toEmail: submission.worker_email,
         actionRoute: "/dashboard/worker-home",
@@ -69,11 +71,11 @@ const TaskToReview = () => {
 
   const handleReject = async (submission) => {
     try {
-      await axios.patch(`https://micronomy.vercel.app/submissions/${submission._id}`, {
+      await axiosInstance.patch(`/submissions/${submission._id}`, {
         status: "rejected",
       });
 
-      await axios.post("https://micronomy.vercel.app/notifications", {
+      await axiosInstance.post("/notifications", {
       message: `Your submission for "${submission.task_title}" was rejected by ${submission.Buyer_name}.`,
       toEmail: submission.worker_email,
       actionRoute: "/dashboard/worker-home",

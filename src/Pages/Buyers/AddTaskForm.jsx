@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const AddTaskForm = () => {
   const { user } = use(AuthContext);
@@ -13,10 +14,11 @@ const AddTaskForm = () => {
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
   const currentTheme = useTheme();
+  const axiosInstance = AxiosToken();
 
   useEffect(() => {
-    axios
-      .get(`https://micronomy.vercel.app/allbuyers/${user.email}`)
+    axiosInstance
+      .get(`/allbuyers/${user.email}`)
       .then((res) => {
         if (res.data) {
           setAvailableCoins(res.data[0].coins);
@@ -93,12 +95,12 @@ const AddTaskForm = () => {
     };
 
     try {
-      await axios.post("https://micronomy.vercel.app/addtask", taskData);
+      await axiosInstance.post("/addtask", taskData);
 
       const updatedCoins = availableCoins - totalPayable;
       // console.log("Updated coins:", updatedCoins);
 
-      await axios.patch(`https://micronomy.vercel.app/allbuyers/${user.email}`, {
+      await axiosInstance.patch(`/allbuyers/${user.email}`, {
         coins: Math.max(updatedCoins, 0),
       });
 
