@@ -55,6 +55,7 @@ const AxiosToken = () => {
           handleLogOut();
         }
       else if (error.response && error.response.status === 403) {
+          console.error("Access denied:", error);
         Swal.fire({
           title: "Access Denied",
           text: "If you are bad, I am your Dad 😎",

@@ -20,7 +20,7 @@ const Testimonial = () => {
 
   useEffect(() => {
     axios
-      .get("/testimonials")
+      .get("http://localhost:3000/testimonials")
       .then((res) => {
         if (res.data) {
           setTestimonials(res.data);

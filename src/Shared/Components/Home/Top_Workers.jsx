@@ -10,7 +10,7 @@ const Top_Workers = () => {
   const [workers, setWorkers] = useState([]);
   useEffect(() => {
     axios
-      .get("/allworkers")
+      .get("http://localhost:3000/allworkers")
       .then((res) => {
         if (res.data) {
           setWorkers(res.data);

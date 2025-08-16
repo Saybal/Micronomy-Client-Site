@@ -14,10 +14,10 @@ const TaskDetails = () => {
   const [task, setTask] = useState(null);
   const [submissionDetails, setSubmissionDetails] = useState("");
   const currentTheme = useTheme();
-  const axiosInstance = AxiosToken();
+  
 
   useEffect(() => {
-    axiosInstance.get(`/addtask/${id}`)
+    axios.get(`http://localhost:3000/addtask/${id}`)
       .then(res => setTask(res.data[0]))
       .catch(err => console.error(err));
   }, [id]);
@@ -45,7 +45,7 @@ const TaskDetails = () => {
 
   try {
     // 1. Submit task
-    await axiosInstance.post("/submissions", submission);
+    await axios.post("http://localhost:3000/submissions", submission);
 
     // 2. Send Notification to Buyer
     const notification = {
@@ -55,7 +55,7 @@ const TaskDetails = () => {
       time: new Date(),
     };
 
-    await axiosInstance.post("/notifications", notification);
+    await axios.post("http://localhost:3000/notifications", notification);
 
     Swal.fire("Success", "Submission sent successfully!", "success");
     setSubmissionDetails("");
