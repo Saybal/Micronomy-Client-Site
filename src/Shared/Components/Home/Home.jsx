@@ -4,6 +4,8 @@ import Top_Workers from './Top_Workers';
 import Testimonial from './Testimonial';
 import { useTheme } from '../../Hooks/useTheme';
 import ExtraSections from './ExtraSections';
+import AboutSection from './AboutSection';
+import WhyChooseUs from './WhyChooseUs';
 
 const Home = () => {
 
@@ -14,6 +16,8 @@ const Home = () => {
           : "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
       }}`}>
             <HeroSection />
+            <AboutSection />
+            <WhyChooseUs />
             <Top_Workers />
             <Testimonial />
             <ExtraSections/>

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import AxiosToken from "../../Shared/Hooks/AxiosToken";
+import { MdCancel } from "react-icons/md";
 
 const AddTaskForm = () => {
   const { user } = use(AuthContext);
@@ -222,24 +223,38 @@ const AddTaskForm = () => {
             <div>
               <label className="font-bold">Custom Requirements</label>
               {customRequirements.map((req, index) => (
-                <div key={index} className="flex gap-2 mt-2">
-                  <input
-                    type="text"
-                    className="input input-bordered w-full"
-                    placeholder={`Requirement ${index + 1}`}
-                    value={req}
-                    onChange={(e) =>
-                      handleChangeRequirement("custom", index, e.target.value)
-                    }
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-error"
-                    onClick={() => handleRemoveRequirement("custom", index)}
-                    disabled={customRequirements.length === 1}
-                  >
-                    Remove
-                  </button>
+                <div key={index} className="flex items-center gap-2 mt-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      className="input input-bordered w-full"
+                      placeholder={`Requirement ${index + 1}`}
+                      value={req}
+                      onChange={(e) =>
+                        handleChangeRequirement("custom", index, e.target.value)
+                      }
+                    />
+                    {/* Remove Icon */}
+                    {req.length > 1 && (
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
+                        onClick={() => handleRemoveRequirement("custom", index)}
+                      >
+                        <MdCancel className="text-2xl hover:text-orange-700" />
+                      </button>
+                    )}
+                  </div>
+                  {req.length !== 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => handleAddRequirement("custom")}
+                    >
+                      Add Requirement
+                    </button>
+                  ) 
+                  }
                 </div>
               ))}
               <button

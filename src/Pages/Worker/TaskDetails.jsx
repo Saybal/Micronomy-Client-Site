@@ -5,7 +5,13 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import { motion } from "framer-motion";
-import { FaUserTie, FaCalendarAlt, FaCoins, FaUsers, FaTasks } from "react-icons/fa";
+import {
+  FaUserTie,
+  FaCalendarAlt,
+  FaCoins,
+  FaUsers,
+  FaTasks,
+} from "react-icons/fa";
 import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 const TaskDetails = () => {
@@ -87,7 +93,10 @@ const TaskDetails = () => {
         time: new Date(),
       };
 
-      await axiosInstance.post("http://localhost:3000/notifications", notification);
+      await axiosInstance.post(
+        "http://localhost:3000/notifications",
+        notification
+      );
 
       Swal.fire("Success", "Submission sent successfully!", "success");
       setSubmissionDetails("");
@@ -144,8 +153,8 @@ const TaskDetails = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <p className="flex items-center gap-2">
-                  <FaCoins className="text-indigo-500" /> <strong>Payable:</strong>{" "}
-                  {task.payable_amount} coins
+                  <FaCoins className="text-indigo-500" />{" "}
+                  <strong>Payable:</strong> {task.payable_amount} coins
                 </p>
                 <p className="flex items-center gap-2">
                   <FaUsers className="text-indigo-500" />{" "}
@@ -179,11 +188,36 @@ const TaskDetails = () => {
           }`}
         >
           <h3 className="text-2xl font-semibold mb-2 flex items-center gap-2">
-            <FaTasks className="text-indigo-500" /> Requirements
+            <FaTasks className="text-indigo-500" /> Task Requirements
           </h3>
           <ul className="list-disc pl-5 space-y-1 text-sm">
-            {task.requirements && task.requirements.length > 0 ? (
-              task.requirements.map((req, idx) => <li key={idx}>{req}</li>)
+            {task.custom_requirements && task.custom_requirements.length > 0 ? (
+              task.custom_requirements.map((req, idx) => (
+                <li key={idx}>{req}</li>
+              ))
+            ) : (
+              <li>No specific requirements mentioned.</li>
+            )}
+          </ul>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className={`rounded-xl shadow-md p-6 border ${
+            currentTheme === "acid"
+              ? "bg-white text-gray-800 border-indigo-200"
+              : "bg-gray-800 text-white border-gray-700"
+          }`}
+        >
+          <h3 className="text-2xl font-semibold mb-2 flex items-center gap-2">
+            <FaTasks className="text-indigo-500" /> Submission Requirements
+          </h3>
+          <ul className="list-disc pl-5 space-y-1 text-sm">
+            {task.submission_requirements && task.submission_requirements.length > 0 ? (
+              task.submission_requirements.map((req, idx) => (
+                <li key={idx}>{req}</li>
+              ))
             ) : (
               <li>No specific requirements mentioned.</li>
             )}
@@ -214,7 +248,9 @@ const TaskDetails = () => {
           ></textarea>
 
           <div>
-            <label className="block mb-2 font-medium">Upload Proof Images</label>
+            <label className="block mb-2 font-medium">
+              Upload Proof Images
+            </label>
             <input
               type="file"
               multiple
