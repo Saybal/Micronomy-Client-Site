@@ -15,6 +15,8 @@ const AddTaskForm = () => {
   const navigate = useNavigate();
   const currentTheme = useTheme();
   const axiosInstance = AxiosToken();
+  const [customRequirements, setCustomRequirements] = useState([""]);
+  const [submissionRequirements, setSubmissionRequirements] = useState([""]);
 
   useEffect(() => {
     axiosInstance
@@ -68,6 +70,37 @@ const AddTaskForm = () => {
     }
   };
 
+  // Handle adding/removing inputs
+  const handleAddRequirement = (type) => {
+    if (type === "custom") {
+      setCustomRequirements([...customRequirements, ""]);
+    } else {
+      setSubmissionRequirements([...submissionRequirements, ""]);
+    }
+  };
+
+  const handleRemoveRequirement = (type, index) => {
+    if (type === "custom") {
+      setCustomRequirements(customRequirements.filter((_, i) => i !== index));
+    } else {
+      setSubmissionRequirements(
+        submissionRequirements.filter((_, i) => i !== index)
+      );
+    }
+  };
+
+  const handleChangeRequirement = (type, index, value) => {
+    if (type === "custom") {
+      const updated = [...customRequirements];
+      updated[index] = value;
+      setCustomRequirements(updated);
+    } else {
+      const updated = [...submissionRequirements];
+      updated[index] = value;
+      setSubmissionRequirements(updated);
+    }
+  };
+
   const onSubmit = async (data) => {
     const requiredWorkers = parseInt(data.required_workers);
     const payableAmount = parseFloat(data.payable_amount);
@@ -92,6 +125,12 @@ const AddTaskForm = () => {
       total_payable: totalPayable,
       buyer_email: user.email,
       posted_at: new Date(),
+      custom_requirements: customRequirements.filter(
+        (req) => req.trim() !== ""
+      ),
+      submission_requirements: submissionRequirements.filter(
+        (req) => req.trim() !== ""
+      ),
     };
 
     try {
@@ -117,8 +156,16 @@ const AddTaskForm = () => {
       {loader ? (
         <h1>loading</h1>
       ) : (
-        <div className={`max-w-4xl mx-auto p-6 ${currentTheme === 'acid' ? "bg-white" : "bg-gray-700"}  rounded-xl shadow`}>
-          <h2 className={`${currentTheme === 'acid' ? "text-black" : "text-white"} text-2xl font-bold mb-6 text-center`}>
+        <div
+          className={`max-w-4xl mx-auto p-6 ${
+            currentTheme === "acid" ? "bg-white" : "bg-gray-700"
+          }  rounded-xl shadow`}
+        >
+          <h2
+            className={`${
+              currentTheme === "acid" ? "text-black" : "text-white"
+            } text-2xl font-bold mb-6 text-center`}
+          >
             Post a New Task
           </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -171,15 +218,75 @@ const AddTaskForm = () => {
               <p className="text-red-500">Completion date is required</p>
             )}
 
-            <input
-              type="text"
-              placeholder="Submission Info (e.g., screenshot)"
-              className="input input-bordered w-full"
-              {...register("submission_info", { required: true })}
-            />
-            {errors.submission_info && (
-              <p className="text-red-500">Submission info required</p>
-            )}
+            {/* Custom Requirements */}
+            <div>
+              <label className="font-bold">Custom Requirements</label>
+              {customRequirements.map((req, index) => (
+                <div key={index} className="flex gap-2 mt-2">
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder={`Requirement ${index + 1}`}
+                    value={req}
+                    onChange={(e) =>
+                      handleChangeRequirement("custom", index, e.target.value)
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-error"
+                    onClick={() => handleRemoveRequirement("custom", index)}
+                    disabled={customRequirements.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn btn-primary mt-2"
+                onClick={() => handleAddRequirement("custom")}
+              >
+                Add Requirement
+              </button>
+            </div>
+
+            {/* Submission Requirements */}
+            <div className="mt-4">
+              <label className="font-bold">Submission Requirements</label>
+              {submissionRequirements.map((req, index) => (
+                <div key={index} className="flex gap-2 mt-2">
+                  <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder={`Submission ${index + 1}`}
+                    value={req}
+                    onChange={(e) =>
+                      handleChangeRequirement(
+                        "submission",
+                        index,
+                        e.target.value
+                      )
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-error"
+                    onClick={() => handleRemoveRequirement("submission", index)}
+                    disabled={submissionRequirements.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn btn-primary mt-2"
+                onClick={() => handleAddRequirement("submission")}
+              >
+                Add Submission
+              </button>
+            </div>
 
             <input
               type="file"

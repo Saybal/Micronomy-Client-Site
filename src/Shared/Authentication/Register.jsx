@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
 import { ImFacebook2 } from "react-icons/im";
@@ -15,79 +15,89 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const API_KEY = "80b9fa56bab2917fb9bc7ff431a08768";
 
-  const handleCreateAccount = (e) => {
+  const handleImageUpload = async (e) => {
+    const image = e.target.files[0];
+    setImageFile(image);
+  };
+
+  const handleCreateAccount = async (e) => {
     e.preventDefault();
     const Name = e.target.Name.value;
-    const photo = e.target.photo.value;
     const Email = e.target.Email.value;
     const password = e.target.Password.value;
     const acoountType = e.target.acoountType.value;
 
-    createUser(Email, password)
-      .then((result) => {
-        const user = result.user;
-        updateProfile(user, {
-          displayName: Name,
-          photoURL: photo,
-        }).then(() => {
-          setUser({ ...user, displayName: Name, photoURL: photo });
+    if (!imageFile) {
+      swal({ text: "Please upload a profile picture!", icon: "warning" });
+      return;
+    }
 
-          const userData = {
-            name: Name,
-            profession: "",
-            email: Email,
-            image: photo,
-            coins: acoountType === "Worker" ? 10 : 50,
-            about: "",
-            role: acoountType === "Worker" ? "worker" : "buyer",
-          };
+    try {
+      setUploading(true);
 
-          if (acoountType === "Worker") {
-            axios
-              .post("/allworkers", userData)
-              .then(() => {
-                swal({
-                  text: "You have successfully registered and earned 10 coins!",
-                  icon: "success",
-                  button: "Okay",
-                });
-                navigate(from, { replace: true });
-              })
-              .catch((err) => {
-                console.error("Error posting to database:", err);
-                swal({
-                  text: "Account created but failed to save user data!",
-                  icon: "warning",
-                  button: "Okay",
-                });
-              });
-          }
-          else {
-            axios
-              .post("/allbuyers", userData)
-              .then(() => {
-                swal({
-                  text: "You have successfully registered and earned 50 coins!",
-                  icon: "success",
-                  button: "Okay",
-                });
-                navigate(from, { replace: true });
-              })
-              .catch((err) => {
-                console.error("Error posting to database:", err);
-                swal({
-                  text: "Account created but failed to save user data!",
-                  icon: "warning",
-                  button: "Okay",
-                });
-              });
-          }
-        });
-      })
-      .catch((err) => {
-        swal({ text: err.message, icon: "error", button: "Okay" });
+      // !Upload image to imgbb
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${API_KEY}`,
+        formData
+      );
+
+      // const imgData = await res.json();
+      // if (!imgData.success) throw new Error("Image upload failed");
+
+      const photoURL = res.data.data.display_url;
+
+      // Create user in Firebase
+      const result = await createUser(Email, password);
+      const user = result.user;
+
+      await updateProfile(user, {
+        displayName: Name,
+        photoURL: photoURL,
       });
+
+      setUser({ ...user, displayName: Name, photoURL: photoURL });
+
+      // prepare user data for DB
+      const userData = {
+        name: Name,
+        profession: "",
+        email: Email,
+        image: photoURL,
+        coins: acoountType === "Worker" ? 10 : 50,
+        about: "",
+        role: acoountType === "Worker" ? "worker" : "buyer",
+      };
+
+      if (acoountType === "Worker") {
+        await axios.post("http://localhost:3000/allworkers", userData);
+        swal({
+          text: "You have successfully registered and earned 10 coins!",
+          icon: "success",
+          button: "Okay",
+        });
+      } else {
+        await axios.post("http://localhost:3000/allbuyers", userData);
+        swal({
+          text: "You have successfully registered and earned 50 coins!",
+          icon: "success",
+          button: "Okay",
+        });
+      }
+
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error(err);
+      swal({ text: err.message, icon: "error", button: "Okay" });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -160,13 +170,14 @@ const Register = () => {
                 </select>
               </div>
               <div>
-                <label className="label text-white">Photo URL</label>
+                <label className="label text-white">Your Profile</label>
                 <input
-                  type="text"
+                  type="file"
                   name="photo"
+                  onChange={handleImageUpload}
                   required
-                  placeholder="Photo URL"
-                  className="input bg-gray-200 text-black input-bordered w-full"
+                  placeholder="Your Profile"
+                  className="input bg-gray-200 text-black w-full"
                 />
               </div>
               <div>

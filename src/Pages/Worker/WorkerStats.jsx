@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import AxiosToken from "../../Shared/Hooks/AxiosToken";
+import { generateToken } from "../../Shared/Hooks/firebase.config";
 
 const WorkerStats = () => {
   const { user } = useContext(AuthContext);
@@ -14,6 +15,15 @@ const WorkerStats = () => {
     pendingSubmissions: 0,
     totalEarnings: 0,
   });
+
+  useEffect(() => {
+    document.title = "Worker Stats";
+  }, []);
+
+  // !Request Firebase token for notifications
+  useEffect(() => {
+    generateToken();
+  }, []);
 
   useEffect(() => {
     if (user?.email) {

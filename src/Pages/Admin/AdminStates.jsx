@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useTheme } from "../../Shared/Hooks/useTheme";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
+import { generateToken, messaging } from "../../Shared/Hooks/firebase.config";
+import { onMessage } from "firebase/messaging";
 
 const AdminStates = () => {
   const currentTheme = useTheme();
@@ -10,6 +12,18 @@ const AdminStates = () => {
   const [totalBuyers, setTotalBuyers] = useState(0);
   const [totalCoins, setTotalCoins] = useState(0);
   const [totalPayments, setTotalPayments] = useState(0);
+
+  useEffect(() => {
+      document.title = "Worker Stats";
+    }, []);
+  
+    // !Request Firebase token for notifications
+    useEffect(() => {
+      generateToken();
+      onMessage(messaging, (payload) => {
+        console.log("Message received. ", payload);
+      });
+    }, []);
 
   useEffect(() => {
     axios.get("http://localhost:3000/allworkers").then((res) => {

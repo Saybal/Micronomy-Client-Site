@@ -5,6 +5,7 @@ import BuyerDashboard from "./BuyerDashboard";
 import WorkerDashboard from "./WorkerDashboard";
 import axios from "axios";
 import Loading from "../../Shared/Components/Loader/Loading";
+import AxiosToken from "../../Shared/Hooks/AxiosToken";
 
 
 const DashboardRouter = () => {
@@ -12,25 +13,26 @@ const DashboardRouter = () => {
     const [loading, setLoading] = useState(true);
     const [role, setRole] = useState("");
     const [coin, setCoin] = useState(0);
+    const axiosInstance = AxiosToken();
 
     useEffect(() => {
         const fetchRole = async () => {
             try {
-                const adminRes = await axios.get(`/alladmins/${user.email}`);
+                const adminRes = await axiosInstance.get(`/alladmins/${user.email}`);
                 if (adminRes.data.length > 0) {
                     setRole("admin");
                     setCoin(adminRes.data[0].coins)
                     setLoading(false);
                     return;
                 }
-                const buyerRes = await axios.get(`/allbuyers/${user.email}`);
+                const buyerRes = await axiosInstance.get(`/allbuyers/${user.email}`);
                 if (buyerRes.data.length > 0) {
                     setRole("buyer");
                     setCoin(buyerRes.data[0].coins)
                     setLoading(false);
                     return;
                 }
-                const workerRes = await axios.get(`/allworkers/${user.email}`);
+                const workerRes = await axiosInstance.get(`/allworkers/${user.email}`);
                 if (workerRes.data.length > 0) {
                     setRole("worker");
                     setCoin(workerRes.data[0].coins)

@@ -4,12 +4,22 @@ import { useTheme } from "../../Shared/Hooks/useTheme";
 import { AuthContext } from "../../Shared/Hooks/AuthProvider";
 import { FaTasks, FaUsersCog, FaDollarSign } from "react-icons/fa";
 import AxiosToken from "../../Shared/Hooks/AxiosToken";
+import { generateToken } from "../../Shared/Hooks/firebase.config";
 
 const States = () => {
   const currentTheme = useTheme();
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState({ totalTasks: 0, pendingWorkers: 0, totalPayment: 0 });
   const axiosInstance = AxiosToken();
+
+  useEffect(() => {
+      document.title = "Buyer Stats";
+    }, []);
+  
+    // !Request Firebase token for notifications
+    useEffect(() => {
+      generateToken();
+    }, []);
 
   useEffect(() => {
     if (user?.email) {
