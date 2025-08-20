@@ -33,9 +33,12 @@ const AxiosToken = () => {
   };
 
   instance.interceptors.request.use(
-    (config) => {
-      if (user && user.accessToken) {
-        config.headers.authorization = `Bearer ${user.accessToken}`;
+    async (config) => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const token = await getIdToken(user, true);
+        config.headers.authorization = `Bearer ${token}`;
       }
       return config;
     },
